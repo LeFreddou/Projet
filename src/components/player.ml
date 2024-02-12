@@ -1,0 +1,17 @@
+open Component_def
+open System_def
+
+let create id x y w h color moov =
+  let j = new player in 
+  j # pos # set Vector.{ x = float x; y = float y };
+  j # rect # set Rect.{width = w; height = h};
+  j # color # set color;
+  j # id # set id;
+  j # layer # set 1;
+  j # moov_up_left # set moov;
+  Key_system.register (j :> movable);
+  Collisions_system.register (j :> collidable);
+  Move_system.register (j :> movable);
+  Draw_system.register (j :> drawable);
+  Zonable_System.register (j:>zonable);
+  j
