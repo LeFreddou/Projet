@@ -29,8 +29,7 @@ let update _dt (el : t Seq.t) =
         |3 -> let sorties = find_exit e2 el2 in
          Seq.iter (fun (sortie :t) -> 
           Gfx.debug "%s\n" sortie#id#get;
-          let 
-          let n_pos = Vector.add sortie#pos#get Vector.{x = float (e#rect#get).w; y = e#rect#get.h} in
+          let n_pos = Vector.add sortie#pos#get Vector.{x = float (sortie#rect#get).width; y = float sortie#rect#get.height} in
            ()
           
           
