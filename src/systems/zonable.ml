@@ -5,7 +5,7 @@ type t = zonable
 let init _ = ()
 
 let find_exit node (el : t Seq.t) =
-  let a = Seq.filter_map (fun (e : t) -> if ((e#id#get) = e#sibling#get && e#effect#get = 4 )
+  let a = Seq.filter_map (fun (e : t) -> if ((e#id#get) = node#sibling#get && e#effect#get = 4 )
      then Some e else None) el in
   if Seq.is_empty a then failwith "Error" 
   else Seq.take 1 a
@@ -28,12 +28,15 @@ let update _dt (el : t Seq.t) =
         |2 -> e1#moov_up_left#set true;
         |3 -> let sorties = find_exit e2 el2 in
          Seq.iter (fun (sortie :t) -> 
-          Gfx.debug "%s\n" sortie#id#get;
-          let n_pos = Vector.add sortie#pos#get Vector.{x = float (sortie#rect#get).width; y = float sortie#rect#get.height} in
-           ()
+          let n_pos = Vector.add sortie#pos#get 
+                                (Vector.mult (1./.2.) Vector.{x = float (sortie#rect#get).width; y = float sortie#rect#get.height})
+          in
+          let n_pos = Vector.add n_pos (Vector.sub Vector.zero (Vector.mult (1./.2.) Vector.{x = float (e1#rect#get).width; y = float e1#rect#get.height})) 
+          in e1#pos#set n_pos
           
           
           ) sorties
+        |5 -> let depart = Vector.{x = 50. ; y = 460.} in e1#pos#set depart
         |_ -> ()
       
       

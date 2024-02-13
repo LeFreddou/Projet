@@ -17,7 +17,10 @@ let init_wall () =
 
 let init_zone () = 
   ignore (Zone.create "zone1" 400 10 400 300 1);
-  ignore (Zone.create "zone2" 0 500 100 100 2)
+  ignore (Zone.create "zone2" 0 500 100 100 2);
+  ignore (Zone.create_tp_entree "Entree" "Sortie" 100 460 20 20);
+  ignore (Zone.create "Sortie" 100 100 20 20 4);
+  ignore (Zone.create "Death" 450 450 20 20 5)
 
 let player = Player.create "player" 50 460 10 10 red true
 
@@ -27,12 +30,31 @@ let has_key, set_key, unset_key =
   (fun s -> Hashtbl.replace h s ()), 
   (fun s-> Hashtbl.remove h s)
 
+let bg_ressource = ref None
+
+let load_img () =
+  let ctx = Gfx.get_context(Global.window ()) in
+  bg_ressource := Some (Gfx.load_image ctx "resources/images/bottom_left.png")
+
+
+let wait_textures _dt =
+  match !bg_ressource with
+    None -> failwith "Error"
+    | Some r -> not (Gfx.resource_ready r)
+
 
 
 let init dt =
   init_wall ();
-  init_zone ();
   Ecs.System.init_all dt;
+  load_img ();
+  Gfx.main_loop wait_textures;
+  let bg_surf = match !bg_ressource with 
+  None -> assert false
+  |Some r -> Gfx.get_resource r
+  in
+  init_zone ();
+
   false
 
 

@@ -5,6 +5,7 @@ type t = movable
 
 let init _ = () 
 let dt = 1000. /. 60.
+let debug = true
 
 let x = ref 0.
 let y = ref 0.
@@ -24,9 +25,12 @@ let update _dt el =
     KeyDown s -> set_key s; Gfx.debug "%s\n%!"s;
     | KeyUp s -> unset_key s
     | _ -> () in 
-    if (has_key "q" && not(e#moov_up_left#get)) then x := !x -. 0.25;
-    if (has_key "d" && (e#moov_up_left#get)) then x := !x +. 0.25;
-    if (has_key "z" && (e#moov_up_left#get)) then y := !y -. 0.25;
-    if (has_key "s" && not(e#moov_up_left#get)) then y := !y +. 0.25;
-    e#velocity#set Vector.{x =  !x ;y =  !y}
+    if (has_key "q" && (not(e#moov_up_left#get) || debug)) then x := !x -. 0.25;
+    if (has_key "d" && ((e#moov_up_left#get) || debug)) then x := !x +. 0.25;
+    if (has_key "z" && ((e#moov_up_left#get) || debug)) then y := !y -. 0.25;
+    if (has_key "s" && (not(e#moov_up_left#get) || debug)) then y := !y +. 0.25;
+    let n_vel = if (!x != 0. && !y != 0.) then 
+       Vector.mult (1./.(sqrt 2.)) Vector.{x =  !x ;y =  !y} 
+       else Vector.{x =  !x ;y =  !y} in 
+    e#velocity#set n_vel
   ) el

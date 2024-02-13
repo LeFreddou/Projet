@@ -56,12 +56,16 @@ class layer =
 (*1 = moov HD
   2 = moov BG
   3 = téléportation entrée ?
-  4 = tp sortie ?*)
+  4 = tp sortie 
+  5 = death zone*)
 class effect =
   object
     val effect = Component.def 0
     method effect = effect
   end
+
+
+
 (*Complex components*)
 
 class drawable =
