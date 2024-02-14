@@ -32,9 +32,9 @@ let has_key, set_key, unset_key =
 
 let bg_ressource = ref None
 
-let load_img () =
+let load_img dst path =
   let ctx = Gfx.get_context(Global.window ()) in
-  bg_ressource := Some (Gfx.load_image ctx "resources/images/bottom_left.png")
+  dst := Some (Gfx.load_image ctx path)
 
 
 let wait_textures _dt =
