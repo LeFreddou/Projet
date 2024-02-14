@@ -19,6 +19,12 @@ class velocity =
     method velocity = velocity
   end
 
+class texture =
+  object
+    val texture = Component.def (Texture.color (Gfx.color 0 0 0 0))
+    method texture = texture
+  end
+
 class color =
   object
     val color = Component.def (Gfx.color 0 0 0 0)
@@ -72,7 +78,7 @@ class drawable =
   object
     inherit position
     inherit rect
-    inherit color
+    inherit texture
   end
 
 

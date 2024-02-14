@@ -5,7 +5,7 @@ let create id x y w h color moov =
   let j = new player in 
   j # pos # set Vector.{ x = float x; y = float y };
   j # rect # set Rect.{width = w; height = h};
-  j # color # set color;
+  j # texture # set color;
   j # id # set id;
   j # layer # set 1;
   j # moov_up_left # set moov;

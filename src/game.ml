@@ -4,10 +4,21 @@ open Component_def
 (* On crée une fenêtre *)
 let () = Global.init (Format.sprintf "game_canvas:%dx%d:r=presentvsync" 800 600)
 
-let blue = Gfx.color 0 0 255 255
-let black = Gfx.color 0 0 0 255
-let red = Gfx.color 255 0 0 255
+let blue = Texture.color (Gfx.color 0 0 255 255)
+let black = Texture.color (Gfx.color 0 0 0 255)
+let red = Texture.color (Gfx.color 255 0 0 255)
 
+let bg_ressource = ref None
+
+
+let load_img dst path =
+  let ctx = Gfx.get_context(Global.window ()) in
+  dst := Some (Gfx.load_image ctx path)
+
+let wait_textures res _dt =
+  match !res with
+    None -> failwith "Error"
+    | Some r -> not (Gfx.resource_ready r)
 
 let init_wall () =
   ignore (Wall.create "wall_top" 0 0 800 10 black );
@@ -16,6 +27,12 @@ let init_wall () =
   ignore (Wall.create "wall_right" 790 10 10 580 black )
 
 let init_zone () = 
+  load_img bg_ressource "resources/images/bottom_left.png";
+  Gfx.main_loop (wait_textures bg_ressource);
+  let bg_surf = match !bg_ressource with 
+  None -> assert false
+  |Some r -> Gfx.get_resource r
+  in
   ignore (Zone.create "zone1" 400 10 400 300 1);
   ignore (Zone.create "zone2" 0 500 100 100 2);
   ignore (Zone.create_tp_entree "Entree" "Sortie" 100 460 20 20);
@@ -30,29 +47,11 @@ let has_key, set_key, unset_key =
   (fun s -> Hashtbl.replace h s ()), 
   (fun s-> Hashtbl.remove h s)
 
-let bg_ressource = ref None
-
-let load_img dst path =
-  let ctx = Gfx.get_context(Global.window ()) in
-  dst := Some (Gfx.load_image ctx path)
-
-
-let wait_textures _dt =
-  match !bg_ressource with
-    None -> failwith "Error"
-    | Some r -> not (Gfx.resource_ready r)
-
 
 
 let init dt =
   init_wall ();
   Ecs.System.init_all dt;
-  load_img ();
-  Gfx.main_loop wait_textures;
-  let bg_surf = match !bg_ressource with 
-  None -> assert false
-  |Some r -> Gfx.get_resource r
-  in
   init_zone ();
 
   false
