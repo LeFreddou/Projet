@@ -8,26 +8,17 @@ let black = Texture.color (Gfx.color 0 0 0 255)
 
 
 
-(*1 = moov BG
-  2 = moov HD
+(*1 = moov
+  2 = death zone
   3 = téléportation entrée ?
-  4 = tp sortie 
-  5 = death zone*)
+  4 = tp sortie*)
 let create id x y w h effect =
   let z = new zone in 
   z # pos # set Vector.{x = float x; y = float y};
   z # rect # set Rect.{width = w; height = h};
   let () = match effect with
-
   4 ->z#texture#set trans_blue 
-  |5 -> z#texture#set black;
-  z#haut#set true;
-  z#droite#set true;
-  z#bas#set false;
-  z#gauche#set false;
-
   |_ -> z # texture # set trans_black
-
 in 
   z # id # set id;
   z # layer # set 3;

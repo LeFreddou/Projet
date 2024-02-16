@@ -30,19 +30,16 @@ let update _dt (el : t Seq.t) =
       then begin
         match e2#effect#get with 
         1 -> update_moov e1 e2;
-        |2 -> update_moov e1 e2;
+        |2 -> let depart = Vector.{x = 50. ; y = 460.} in e1#pos#set depart;
+        update_moov e1 e2
         |3 -> let sorties = find_exit e2 el2 in
          Seq.iter (fun (sortie :t) -> 
-          let n_pos = Vector.add sortie#pos#get 
-                                (Vector.mult (1./.2.) Vector.{x = float (sortie#rect#get).width; y = float sortie#rect#get.height})
+          let n_pos = Vector.add (Vector.add sortie#pos#get 
+                                (Vector.mult (1./.2.) Vector.{x = float (sortie#rect#get).width; y = float sortie#rect#get.height}))
+                                (Vector.sub Vector.zero (Vector.mult (1./.2.) Vector.{x = float (e1#rect#get).width; y = float e1#rect#get.height}))
           in
-          let n_pos = Vector.add n_pos (Vector.sub Vector.zero (Vector.mult (1./.2.) Vector.{x = float (e1#rect#get).width; y = float e1#rect#get.height})) 
-          in e1#pos#set n_pos
-          
-          
+          e1#pos#set n_pos
           ) sorties
-        |5 -> let depart = Vector.{x = 50. ; y = 460.} in e1#pos#set depart;
-        update_moov e1 e2
         |_ -> ()
       
       

@@ -8,10 +8,10 @@ let blue = Texture.color (Gfx.color 0 0 255 255)
 let black = Texture.color (Gfx.color 0 0 0 255)
 let red = Texture.color (Gfx.color 255 0 0 255)
 
-let bg_ressource = ref None
+let ressource = ref None
 
 
-let load_bg dst path =
+let load_image dst path =
   let ctx = Gfx.get_context(Global.window ()) in
   dst := Some (Gfx.load_image ctx path)
 
@@ -19,6 +19,23 @@ let wait_textures rsc _dt =
   match !rsc with
     None -> failwith "Error"
     | Some r -> not (Gfx.resource_ready r)
+
+let load_texture_img haut bas gauche droite =
+  let path =
+  match haut,bas,gauche,droite with
+  false ,true,true,false -> "resources/images/bottom_left.png";
+  |false,false,true,true -> "resources/images/right_left.png";
+  |_ -> "resources/images/placeholder.png"
+  in
+  load_image ressource path;
+  Gfx.main_loop (wait_textures ressource) ;
+  let bg_surf = match !ressource with 
+  None -> assert false
+  |Some r -> Gfx.get_resource r
+  in
+  let ctx = Gfx.get_context (Global.window ()) in
+  Texture.image_from_surface ctx bg_surf 0 0 256 256 100 100
+
 
 let init_wall () =
   ignore (Wall.create "wall_top" 0 0 800 10 black );
@@ -28,19 +45,13 @@ let init_wall () =
 
 let init_zone () = 
   
-  load_bg  bg_ressource "resources/images/bottom_left.png";
-  Gfx.main_loop (wait_textures bg_ressource) ;
-  let bg_surf = match !bg_ressource with 
-  None -> assert false
-  |Some r -> Gfx.get_resource r
-  in
-  let ctx = Gfx.get_context (Global.window ()) in
-  let texture = Texture.anim_from_surface ctx bg_surf 1 256 256 300 300 10000 in
-  ignore (Zone.create_moov "zone1" 500 10 300 300 texture false true true false);
-  ignore (Zone.create_moov "zone2" 0 500 100 100 (Texture.color (Gfx.color 0 0 0 128)) true false false true );
+  let texture = load_texture_img false true true false in 
+  ignore (Zone.create_moov "zone1" 700 10 100 100 texture false true true false);
+  let texture = load_texture_img true false false true in 
+  ignore (Zone.create_moov "zone2" 0 500 100 100 texture true false false true );
   ignore (Zone.create_tp_entree "Entree" "Sortie" 100 460 20 20);
-  ignore (Zone.create "Sortie" 100 100 20 20 4);
-  ignore (Zone.create "Death" 450 450 20 20 5)
+  ignore (Zone.create "Sortie" 100 100 20 20 2);
+  ignore (Zone.create "Death" 450 450 20 20 2)
 
 let player = Player.create "player" 50 460 10 10 red
 
