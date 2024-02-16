@@ -24,6 +24,15 @@ let update _dt el =
       Texture.Color color ->
       Gfx.set_color ctx color;
       Gfx.fill_rect ctx surf x y width height
-      |Texture.Image surface -> Gfx.blit_scale ctx surf surface x y width height 
+      |Texture.Image surface ->
+        Gfx.blit_scale ctx surf surface x y width height 
+      | Texture.Animation r -> 
+          r.current_time <- r.current_time -1;
+          if r.current_time = 0 then begin
+            r.current_time <- r.frame_duration;
+            r.current_frame <- (r.current_frame +1) mod (Array.length r.frames)
+          end;
+          let surface = r.frames.(r.current_frame) in
+          Gfx.blit_scale ctx surf surface x y width height
     ) el;
   Gfx.commit ctx

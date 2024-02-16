@@ -43,11 +43,6 @@ class sibling =
     method sibling = sibling
   end
 
-class moov_up_left =
-  object 
-    val moov_up_left = Component.def true
-    method moov_up_left = moov_up_left
-  end
 
 
 (*1 = player
@@ -59,8 +54,8 @@ class layer =
     method layer = layer
   end
 
-(*1 = moov HD
-  2 = moov BG
+(*1 = moov BG
+  2 = moov HD
   3 = téléportation entrée ?
   4 = tp sortie 
   5 = death zone*)
@@ -70,9 +65,41 @@ class effect =
     method effect = effect
   end
 
+class haut =
+  object 
+    val haut = Component.def false
+    method haut = haut
+  end
+
+
+class bas =
+  object 
+    val bas = Component.def false
+    method bas = bas
+  end
+
+class droite =
+  object 
+    val droite = Component.def false
+    method droite = droite
+  end
+class gauche =
+  object 
+    val gauche = Component.def false
+    method gauche = gauche
+  end
+
 
 
 (*Complex components*)
+
+class zone_moov = 
+  object
+    inherit haut
+    inherit bas
+    inherit gauche
+    inherit droite
+  end
 
 class drawable =
   object
@@ -86,7 +113,7 @@ class movable =
   object 
     inherit position
     inherit velocity
-    inherit moov_up_left
+    inherit zone_moov
   end
 
 class collidable =
@@ -95,11 +122,6 @@ class collidable =
     inherit velocity
     inherit layer
     inherit rect
-  end
-
-class zone_moov = 
-  object
-    inherit moov_up_left
   end
 
 class zone_tp =
@@ -133,7 +155,7 @@ class player =
     inherit id
     inherit! collidable
     inherit! zonable 
-    inherit! moov_up_left
+    inherit! zone_moov
   end
 
 class zone = 

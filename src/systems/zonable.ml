@@ -10,6 +10,11 @@ let find_exit node (el : t Seq.t) =
   if Seq.is_empty a then failwith "Error" 
   else Seq.take 1 a
 
+let update_moov e1 e2 =     
+  e1#haut#set e2#haut#get ;
+  e1#bas#set e2#bas#get;
+  e1#gauche#set e2#gauche#get;
+  e1#droite#set e2#droite#get
 
 let update _dt (el : t Seq.t) =
   let el1 = Seq.filter_map (fun (e1 : t) -> if e1#layer#get = 1 then Some e1 else None) el in
@@ -24,8 +29,8 @@ let update _dt (el : t Seq.t) =
       if Rect.has_origin s_pos s_rect 
       then begin
         match e2#effect#get with 
-        1 -> e1#moov_up_left#set false;
-        |2 -> e1#moov_up_left#set true;
+        1 -> update_moov e1 e2;
+        |2 -> update_moov e1 e2;
         |3 -> let sorties = find_exit e2 el2 in
          Seq.iter (fun (sortie :t) -> 
           let n_pos = Vector.add sortie#pos#get 
@@ -36,7 +41,8 @@ let update _dt (el : t Seq.t) =
           
           
           ) sorties
-        |5 -> let depart = Vector.{x = 50. ; y = 460.} in e1#pos#set depart
+        |5 -> let depart = Vector.{x = 50. ; y = 460.} in e1#pos#set depart;
+        update_moov e1 e2
         |_ -> ()
       
       
