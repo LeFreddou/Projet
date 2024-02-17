@@ -23,8 +23,21 @@ let wait_textures rsc _dt =
 let load_texture_img haut bas gauche droite =
   let path =
   match haut,bas,gauche,droite with
-  false ,true,true,false -> "resources/images/bottom_left.png";
-  |false,false,true,true -> "resources/images/right_left.png";
+  true , true, true, true -> "resources/images/all_moov.png"
+  |true, true, true,false -> "resources/images/bottom_up_left.png"
+  |true, true, false, true-> "resources/images/bottom_up_right.png"
+  |true, true, false, false-> "resources/images/bottom_up.png"
+  |true, false, true, true-> "resources/images/up_left_right.png"
+  |true, false, true, false-> "resources/images/up_left.png"
+  |true, false, false, true-> "resources/images/up_right.png"
+  |true, false, false, false-> "resources/images/up.png"
+  |false, true, true, true-> "resources/images/bottom_left_right.png"
+  |false ,true,true,false -> "resources/images/bottom_left.png"
+  |false, true, false, true-> "resources/images/bottom_right.png"
+  |false, true, false, false-> "resources/images/bottom.png"
+  |false,false,true,true -> "resources/images/right_left.png"
+  |false, false, true, false-> "resources/images/left.png"
+  |false, false, false, true-> "resources/images/right.png"
   |_ -> "resources/images/placeholder.png"
   in
   load_image ressource path;
@@ -44,16 +57,16 @@ let init_wall () =
   ignore (Wall.create "wall_right" 790 10 10 580 black )
 
 let init_zone () = 
-  
+  ignore (Zone.create_tp_entree "Entree" "Sortie" 100 460 20 20);
+  ignore (Zone.create "Sortie" 100 100 20 20 4);
+  ignore (Zone.create "Death" 450 450 20 20 2);
   let texture = load_texture_img false true true false in 
   ignore (Zone.create_moov "zone1" 700 10 100 100 texture false true true false);
   let texture = load_texture_img true false false true in 
-  ignore (Zone.create_moov "zone2" 0 500 100 100 texture true false false true );
-  ignore (Zone.create_tp_entree "Entree" "Sortie" 100 460 20 20);
-  ignore (Zone.create "Sortie" 100 100 20 20 2);
-  ignore (Zone.create "Death" 450 450 20 20 2)
+  ignore (Zone.create_moov "zone2" 0 500 100 100 texture true false false true )
 
 let player = Player.create "player" 50 460 10 10 red
+let camera = Camera.create "camera" 0 0 800 600
 
 let has_key, set_key, unset_key =
   let h = Hashtbl.create 16 in

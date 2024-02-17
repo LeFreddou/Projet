@@ -45,7 +45,8 @@ class sibling =
 
 
 
-(*1 = player
+(*0 = camera
+  1 = player
   2 = wall
   3 = zone*)
 class layer =
@@ -106,6 +107,7 @@ class drawable =
     inherit position
     inherit rect
     inherit texture
+    inherit layer
   end
 
 
@@ -114,6 +116,7 @@ class movable =
     inherit position
     inherit velocity
     inherit zone_moov
+    inherit layer
   end
 
 class collidable =
@@ -162,6 +165,14 @@ class zone =
   object 
     inherit drawable
     inherit id
-    inherit layer
+    inherit! layer
     inherit! zonable
+  end
+
+class camera =
+  object
+    inherit drawable
+    inherit! movable
+    inherit id 
+    inherit! layer
   end
