@@ -9,4 +9,5 @@ let create id x y w h =
   cam # layer # set 0;
   Draw_system.register(cam :> drawable);
   Move_system.register(cam :> movable);
+  Zonable_System.register(cam :> zonable);
   cam

@@ -175,4 +175,5 @@ class camera =
     inherit! movable
     inherit id 
     inherit! layer
+    inherit!  zonable
   end

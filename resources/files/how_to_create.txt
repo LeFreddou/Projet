@@ -1,0 +1,38 @@
+1   x y "coordonnées de départ du joueur" h/g/b/d "directions autorisées, on peut en mettre en 1 et 4" \n
+2   x y "coordonnées haut gauche du labyrinthe" \n
+3   \n
+4   m1;m2;m3 "Les murs : chaque carreau de 200x200 lu de gauche à droite est représenté par 3 carac :
+            m1 : mur 1 haut :h, bas :b, gauche:g, droit :d, rien:0
+            m2 : mur 2 h b g d 0
+            m3 : mur 3 h b g d 0
+            (Pourquoi pas 4 ? flemme + pas besoin de 4 murs, ça fait un bloc seul + 
+                              si on en a besoin on peut faire un mur avec un carreau à côté)"
+            "Chaque carreau est séparé par un espace"
+            \n "Si on arrive à \n on passe à la ligne suivante"
+
+5 \n "Si l'on arrive à la fin d'une ligne sans avoir créé de carreau, on passes aux zones"
+6 \n "Un deuxième pour la route"
+7 x y z \n "Les zones : On sépare la grille en carreau de 100x100 (EXPLIQUER MIEUX ???????????)
+            De manière usuelle, on écrit dans l'ordre des x puis des y, donc de haut en bas puis de gauche à droite
+            chaque ligne est représenté par un triplet x y z :
+            x : coordonnée x*100 PAR RAPPORT AU DEBUT DU LABY du point haut gauche de la zone
+            y : coordonnée y*100 PAR RAPPORT AU DEBUT DU LABY du point haut gauche de la zone
+            z : effet de la zone ATTENTION si la zone a besoin de paramètres en plus on rajoute les paramètres dans des parenthèse :
+                effet 1 : On a besoin des directions : (h b)
+                          Par ex : 2 4 1(b d) on met autant de direc que voulu
+                effet 3 : On a besoin de l'id du sibling : (sibling)
+                          Par ex : 2 4 3(feur)
+                effet 4 : On a besoin de l'ib d'origine : (id)
+                          Par ex : 9 10 4(feur)
+                
+                effet S : EFFET SPECIAL 
+                        Cela split la cellule en 4 cellules de 50x50 puis permet de créer 
+                        dans l'ordre de gauche à droite puis de haut en bas des plus petites zones
+                        Si l'effet est de 0 ça ne crée rien
+                        Cela donne x y S : hg hd bg bd avec hg hd bg bd des int d'effet de zone
+                        Par ex : 2 6 S : 2 1(b h d) 2 0 donnera
+                        death   moov_haut_bas_droite
+                        death   rien
+
+                        On ne peut pas refaire un split dans un split !"
+8 \n "Si on retombe sur un saut de ligne sans rien d'autre c'est la fin du document, toutes les zones et murs sont chargés"

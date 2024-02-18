@@ -30,8 +30,12 @@ let update _dt (el : t Seq.t) =
       then begin
         match e2#effect#get with 
         1 -> update_moov e1 e2;
-        |2 -> let depart = Vector.{x = 50. ; y = 460.} in e1#pos#set depart;
-        update_moov e1 e2
+        |2 ->
+         let depart = Vector.{x = 50. ; y = 460.} in
+         e1#pos#set depart;
+         update_moov e1 e2;
+         let cameras = Seq.filter_map (fun (e1 : t) -> if e1#layer#get = 0 then Some e1 else None) el in
+         Seq.iter (fun cam -> cam#pos#set Vector.zero) cameras
         |3 -> let sorties = find_exit e2 el2 in
          Seq.iter (fun (sortie :t) -> 
           let n_pos = Vector.add (Vector.add sortie#pos#get 
@@ -41,10 +45,6 @@ let update _dt (el : t Seq.t) =
           e1#pos#set n_pos
           ) sorties
         |_ -> ()
-      
-      
-      
       end
       ) el2
-
     ) el1

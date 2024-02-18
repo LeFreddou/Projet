@@ -5,7 +5,7 @@ type t = movable
 
 let init _ = () 
 let dt = 1000. /. 60.
-let debug = false
+let debug = ref false
 let x = ref 0.
 let y = ref 0.
 
@@ -24,10 +24,12 @@ let update _dt el =
     KeyDown s -> set_key s; Gfx.debug "%s\n%!"s;
     | KeyUp s -> unset_key s
     | _ -> () in 
-    if (has_key "q" && (e#gauche#get || debug)) then x := !x -. 0.25;
-    if (has_key "d" && ((e#droite#get) || debug)) then x := !x +. 0.25;
-    if (has_key "z" && ((e#haut#get) || debug)) then y := !y -. 0.25;
-    if (has_key "s" && ((e#bas#get) || debug)) then y := !y +. 0.25;
+    if (has_key "q" && (e#gauche#get || !debug)) then x := !x -. 0.25;
+    if (has_key "d" && ((e#droite#get) || !debug)) then x := !x +. 0.25;
+    if (has_key "z" && ((e#haut#get) || !debug)) then y := !y -. 0.25;
+    if (has_key "s" && ((e#bas#get) || !debug)) then y := !y +. 0.25;
+    if (has_key "a") then debug := false;
+    if (has_key "e") then debug := true;
     let n_vel = if (!x != 0. && !y != 0.) then 
        Vector.mult (1./.(sqrt 2.)) Vector.{x =  !x ;y =  !y} 
        else Vector.{x =  !x ;y =  !y} in 
