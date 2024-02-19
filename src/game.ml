@@ -116,7 +116,8 @@ let has_key, set_key, unset_key =
 
 
 let init dt =
-  ignore(Load_lvl.load_lvl 0);
+  init_wall ();
+  init_zone ();
   Ecs.System.init_all dt;
   false
 
