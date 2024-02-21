@@ -47,7 +47,7 @@ let load_texture_img haut bas gauche droite =
   Gfx.main_loop (wait_textures ressource) ;
   let bg_surf = match !ressource with 
   None -> assert false
-  |Some r -> Gfx.get_resource r
+  |Some r ->try Gfx.get_resource r with e -> let msg = Printexc.to_string e in Gfx.debug "%s\n%!" msg; failwith msg
   in
   let ctx = Gfx.get_context (Global.window ()) in
   Texture.image_from_surface ctx bg_surf 0 0 256 256 100 100
@@ -116,8 +116,11 @@ let has_key, set_key, unset_key =
 
 
 let init dt =
-  init_wall ();
-  init_zone ();
+  if false then begin
+  init_wall();
+  init_zone();
+  end else
+  ignore(Load_lvl.load_lvl 0);
   Ecs.System.init_all dt;
   false
 

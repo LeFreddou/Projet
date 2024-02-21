@@ -10,7 +10,10 @@ let violet = Texture.color (Gfx.color 102 0 102 255)
 let trans_blue = Texture.color (Gfx.color 0 0 255 128)
 let trans_red = Texture.color (Gfx.color 255 0 0 128)
 
-
+let new_line file i = 
+  match file with 
+  a::l -> l,a 
+  |_ -> failwith "Fichier fini"
 
 let next_carac line i =
   match line with
@@ -58,7 +61,7 @@ let rec load_walls line file x_lab y_lab ligne =
   let x_mur = ligne * taille_case + x_lab in 
   let ligne_murs = String.split_on_char  ' ' line in 
   load_colonne ligne_murs x_mur x_lab y_lab ligne 0;
-  let line = input_line file in 
+  let file, line = new_line file 4 in 
   load_walls line file x_lab y_lab (ligne+1)
   end
 
@@ -76,7 +79,25 @@ let rec load_moov_zones dir_zone haut bas gauche droite x_zone y_zone=
     failwith (Printf.sprintf "Mauvaise direction enregistrée sur la case %n:%n" x_zone y_zone)
   end
 
-
+let lil_zone lil_x_zone lil_y_zone type_zone case = 
+  match type_zone with 
+    "1" ->  let case, dir_zone = next_carac case 7 in 
+            let dir_zone = String.split_on_char ';' dir_zone in 
+            let haut,bas,gauche,droite = load_moov_zones dir_zone false false false false lil_x_zone lil_y_zone in 
+            ignore(Zone.create_moov (Printf.sprintf "Zone_Moov_%n:%n" lil_x_zone lil_y_zone) lil_x_zone lil_y_zone 100 100 violet haut bas gauche droite);
+            case
+    
+    |"2" -> ignore(Zone.create (Printf.sprintf "Zone_Death_%n:%n" lil_x_zone lil_y_zone) lil_x_zone lil_y_zone 100 100 2);
+            case
+    
+    |"3" -> let case, sibling = next_carac case 7 in
+            ignore(Zone.create_tp_entree (Printf.sprintf "Tp_enter_%n:%n" lil_x_zone lil_y_zone) sibling lil_x_zone lil_y_zone 100 100);
+            case
+    
+    |"4" -> let case, sibling = next_carac case 7 in 
+            ignore(Zone.create sibling lil_x_zone lil_y_zone 100 100 4);
+            case
+    |_ -> case
 
 
 let rec load_zone line file x_lab y_lab =
@@ -104,27 +125,31 @@ let rec load_zone line file x_lab y_lab =
     |"4" -> let case, sibling = next_carac case 7 in 
             ignore(Zone.create sibling x_zone y_zone 100 100 4)
     
-    |"S" -> () (*bitch it's bitching time*)
+    |"S" -> let case, deux_points = next_carac case 7 in 
+            let lil_x_zone = x_zone in 
+            let lil_y_zone = y_zone in 
+            let case, type_zone = next_carac case 7 in
+            let case = lil_zone lil_x_zone lil_y_zone type_zone case in
+            let lil_x_zone = x_zone + 50 in 
+            let case = lil_zone lil_x_zone lil_y_zone type_zone case in
+            let lil_x_zone = x_zone in 
+            let lil_y_zone = y_zone + 50 in 
+            let case = lil_zone lil_x_zone lil_y_zone type_zone case in
+            let lil_x_zone = x_zone + 50 in 
+            ignore(lil_zone lil_x_zone lil_y_zone type_zone case)
+            
+
     |_ -> ()
   in
-  let line = input_line file in 
+  let file, line = new_line file 6 in 
   load_zone line file x_lab y_lab
   end
 
-
-
-
-
-
-
-
-
 let level = ref None
 
-
-
 let load_file dst path =
-  dst := Some (Gfx.load_file path)
+  dst := Some (Gfx.load_file path);
+  Gfx.debug "ressource loadé\n%!"
 
 let wait_file rsc _dt =
   match !rsc with
@@ -140,27 +165,27 @@ let create_file lvl =
   |_ -> Gfx.debug "Pas de niveau \n%!";
         failwith "Pas de niveau"
   in
+  Gfx.debug "Chemin trouvé\n%!";
   load_file level path;
-  Gfx.main_loop (wait_file level) ;
+  Gfx.main_loop (wait_file level);
+  Gfx.debug "resource chargée\n%!";
   match !level with 
-  None -> assert false
-  |Some r -> Gfx.get_resource r
-
+  None -> Gfx.debug "Pas de niveau \n%!";
+  assert false
+  |Some r -> try Gfx.get_resource r with e ->let error = Printexc.to_string e in Gfx.debug "Why %s \n%!" error;
+  failwith "Je sais pas honnêtement"
 
 
 
 
 let load_lvl lvl =
-  Gfx.debug "Debut du loading\n%!";
-  
-  Gfx.debug "C'est pas le path\n%!";
-  try 
-    let file = Gfx.load_file path in 
-  Gfx.debug "C'est pas le file\n%!";
+  Gfx.debug "début loading\n%!";
+  let file = create_file lvl in 
+  Gfx.debug "fichier loadé\n%!";
   (*Ligne 1 joueur*)
   let file = String.split_on_char '\n' file in 
+  let file, line = new_line file 1 in 
   Gfx.debug "ligne 1 : %s\n%!" line;
-
   let joueur = String.split_on_char ' ' line in
   let joueur, x_player = int_carac joueur 1 in
   let joueur, y_player = int_carac joueur 1 in
@@ -168,20 +193,44 @@ let load_lvl lvl =
   (* les directions sont pas encore prises en compte*)
   let camera = Camera.create "camera" 0 0 800 600 in 
   (*Ligne 2 labyrinthe*)
-  let line = input_line file in 
+  let file, line = new_line file 2 in 
   Gfx.debug "ligne 2 : %s\n%!" line;
   let lab = String.split_on_char ' ' line in 
   let lab, x_lab = int_carac lab 2 in 
   let lab, y_lab = int_carac lab 2 in 
 
   (*Ligne 3*)
-  let line = input_line file in 
+  let file, line = new_line file 3 in 
   Gfx.debug "ligne 3 : %s\n%!" line;
 
   (*Ligne 4 murs*)
   let line = "remplissage" in 
   let file = load_walls line file x_lab y_lab 0 in 
-  (*while (!line != "\n") do (*Je sais pas si ça marche, à tester quand le bordel voudra bien marcher*)
+  
+
+
+  (*ligne 5*)
+
+  (*ligne 6*)
+  let file, line = new_line file 6 in 
+  Gfx.debug "%s\n%!" line;
+
+  (*ligne 7 : les zones*)
+  let line ="remplissage" in 
+  ignore(load_zone line file x_lab y_lab);  
+  
+  player, camera
+
+
+
+
+
+
+
+
+
+
+(*while (!line != "\n") do (*Je sais pas si ça marche, à tester quand le bordel voudra bien marcher*)
     (*ligne par ligne*)
     
     let x_mur = !ligne * taille_case + x_lab in 
@@ -217,15 +266,10 @@ let load_lvl lvl =
   *)
 
 
-  (*ligne 5*)
 
-  (*ligne 6*)
-  let line = input_line file in 
-  Gfx.debug "%s\n%!" line;
 
-  (*ligne 7 : les zones*)
-  let line ="remplissage" in 
-  let file = load_zone line file x_lab y_lab in 
+
+
   (*while (!line != "\n") do 
     let line = ref (input_line file) in 
     let case = String.split_on_char ' ' !line in 
@@ -259,11 +303,3 @@ let load_lvl lvl =
 
   done;
 *)
-
-
-
-
-  close_in file;
-  player, camera
-with e -> Gfx.debug "Le fichier s'ouvre pas\n%!";
-raise e
