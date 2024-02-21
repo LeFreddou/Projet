@@ -111,8 +111,28 @@ let rec load_zone line file x_lab y_lab =
   load_zone line file x_lab y_lab
   end
 
-let load_lvl lvl =
-  Gfx.debug "Debut du loading\n%!";
+
+
+
+
+
+
+
+
+let level = ref None
+
+
+
+let load_file dst path =
+  dst := Some (Gfx.load_file path)
+
+let wait_file rsc _dt =
+  match !rsc with
+    None -> failwith "Error"
+    | Some r -> not (Gfx.resource_ready r)
+
+
+let create_file lvl = 
   let path = match lvl with
   0 -> "resources/files/test.level"
   |1 -> "resources/files/01.level"
@@ -120,12 +140,25 @@ let load_lvl lvl =
   |_ -> Gfx.debug "Pas de niveau \n%!";
         failwith "Pas de niveau"
   in
+  load_file level path;
+  Gfx.main_loop (wait_file level) ;
+  match !level with 
+  None -> assert false
+  |Some r -> Gfx.get_resource r
+
+
+
+
+
+let load_lvl lvl =
+  Gfx.debug "Debut du loading\n%!";
+  
   Gfx.debug "C'est pas le path\n%!";
   try 
-    let file = open_in path in 
+    let file = Gfx.load_file path in 
   Gfx.debug "C'est pas le file\n%!";
   (*Ligne 1 joueur*)
-  let line = input_line file in 
+  let file = String.split_on_char '\n' file in 
   Gfx.debug "ligne 1 : %s\n%!" line;
 
   let joueur = String.split_on_char ' ' line in
