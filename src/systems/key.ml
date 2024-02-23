@@ -30,6 +30,13 @@ let update _dt el =
     if (has_key "s" && ((e#bas#get) || !debug)) then y := !y +. 0.25;
     if (has_key "a") then debug := false;
     if (has_key "e") then debug := true;
+    if (has_key "r") then begin 
+      e#pos#set Vector.{x = 50.;y= 460.};
+      e#haut#set true;
+      e#bas#set false;
+      e#gauche#set false;
+      e#droite#set true;
+    end;
     let n_vel = if (!x != 0. && !y != 0.) then 
        Vector.mult (1./.(sqrt 2.)) Vector.{x =  !x ;y =  !y} 
        else Vector.{x =  !x ;y =  !y} in 

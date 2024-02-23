@@ -63,6 +63,7 @@ let init_zone_test () =
   ignore (Zone.create_tp_entree "Entree" "Sortie" 100 460 20 20);
   ignore (Zone.create "Sortie" 100 100 20 20 4);
   ignore (Zone.create "Death" 450 450 20 20 2);
+  ignore (Zone.create "Glace" 300 300 200 100 5);
   let texture = load_texture_img false true true false in 
   ignore (Zone.create_moov "zone1" 700 10 100 100 texture false true true false);
   let texture = load_texture_img true false false true in 
@@ -116,11 +117,8 @@ let has_key, set_key, unset_key =
 
 
 let init dt =
-  if false then begin
-  init_wall();
-  init_zone();
-  end else
-  ignore(Load_lvl.load_lvl 0);
+  init_wall_test();
+  init_zone_test();
   Ecs.System.init_all dt;
   false
 

@@ -44,7 +44,52 @@ let update _dt (el : t Seq.t) =
           in
           e1#pos#set n_pos
           ) sorties
+        |5 -> if not(e2#iced#get) then begin 
+              e2#haut#set e1#haut#get;
+              e2#bas#set e1#bas#get;
+              e2#gauche#set e1#gauche#get; 
+              e2#droite#set e1#droite#get;
+              let has_key, set_key, unset_key =
+                let h = Hashtbl.create 16 in
+                (fun s-> Hashtbl.mem h s),
+                (fun s -> Hashtbl.replace h s ()), 
+                (fun s-> Hashtbl.remove h s) in 
+              e2#in_haut#set (has_key "z");
+              e2#in_bas#set (has_key "s");
+              e2#in_gauche#set (has_key "q");
+              e2#in_droite#set (has_key "d")
+              end;
+              Gfx.debug "haut :%b bas: %b gauche : %b droite : %b \n%!" e2#in_haut#get e2#in_bas#get e2#in_gauche#get e2#in_droite#get;
+              e1#haut#set false;
+              e1#bas#set false;
+              e1#droite#set false;
+              e1#gauche#set false;
+              let x = ref 0. in 
+              let y = ref 0. in 
+              if e2#in_haut#get then y := !y -. 0.25;
+              if e2#in_bas#get then y := !y +. 0.25;
+              if e2#in_gauche#get then x := !x -. 0.25;
+              if e2#in_droite#get then x := !x +. 0.25;
+              let n_vel = if (!x != 0. && !y != 0.) then 
+                Vector.mult (1./.(sqrt 2.)) Vector.{x =  !x ;y =  !y} 
+                else Vector.{x =  !x ;y =  !y} in 
+              Gfx.debug "(%f, %f)" n_vel.x n_vel.y;
+              e1#velocity#set n_vel;
+              e2#iced#set true
         |_ -> ()
       end
+      else 
+        if e2#iced#get = true then begin
+          e1#haut#set e2#haut#get;
+          e1#bas#set e2#bas#get;
+          e1#droite#set e2#droite#get;
+          e1#gauche#set e2#gauche#get;
+          e2#haut#set false;
+          e2#bas#set false;
+          e2#gauche#set false;
+          e2#droite#set false
+
+        end
+
       ) el2
     ) el1

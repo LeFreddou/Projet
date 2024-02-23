@@ -90,7 +90,35 @@ class gauche =
     method gauche = gauche
   end
 
+class iced = 
+  object 
+    val iced = Component.def false
+    method iced = iced
+  end
 
+class in_bas =
+  object 
+    val in_bas = Component.def false
+    method in_bas = in_bas
+  end
+
+  class in_gauche =
+  object 
+    val in_gauche = Component.def false
+    method in_gauche = in_gauche
+  end
+
+  class in_droite =
+  object 
+    val in_droite = Component.def false
+    method in_droite = in_droite
+  end
+
+  class in_haut =
+  object 
+    val in_haut = Component.def false
+    method in_haut = in_haut
+  end
 
 (*Complex components*)
 
@@ -132,6 +160,17 @@ class zone_tp =
     inherit sibling
   end
 
+class zone_ice =
+  object 
+    inherit iced
+    inherit in_haut
+    inherit in_bas
+    inherit in_gauche
+    inherit in_droite
+    inherit velocity
+  end
+
+  
 class zonable =
   object 
     inherit id
@@ -141,7 +180,7 @@ class zonable =
     inherit effect
     inherit zone_moov
     inherit zone_tp
-
+    inherit zone_ice
   end
 
 class wall =

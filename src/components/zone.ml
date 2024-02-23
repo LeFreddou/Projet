@@ -4,6 +4,7 @@ open System_def
 let trans_black = Texture.color (Gfx.color 0 0 0 128)
 let trans_red = Texture.color (Gfx.color 255 0 0 128)
 let trans_blue = Texture.color (Gfx.color 0 0 255 128)
+let trans_light_blue = Texture.color (Gfx.color 128 128 255 128)
 
 let trans_yellow = Texture.color (Gfx.color 255 255 0 128)
 
@@ -14,7 +15,8 @@ let black = Texture.color (Gfx.color 0 0 0 255)
 (*1 = moov
   2 = death zone
   3 = téléportation entrée ?
-  4 = tp sortie*)
+  4 = tp sortie
+  5 = ice*)
 let create id x y w h effect =
   (**
       [create id x y w h effect]*)
@@ -23,7 +25,7 @@ let create id x y w h effect =
   z # rect # set Rect.{width = w; height = h};
   let () = match effect with
   4 ->z#texture#set trans_blue 
-  |5 -> z#texture#set trans_yellow
+  |5 -> z#texture#set trans_light_blue
   |_ -> z # texture # set trans_black
 in 
   z # id # set id;
