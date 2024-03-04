@@ -1,0 +1,30 @@
+
+début loading
+Chemin trouvé
+fichier loadé
+ligne 1 : 50 450 h d
+ligne 2 : 0 0
+ligne 3 : 
+ligne 4 : g;h;0 h;0;0 h;0;0 h;d;0
+mur_gauche_0:0 -> 10:200
+mur_haut_0:0 -> 200:10
+mur_haut_200:0 -> 400:10
+mur_haut_400:200 -> 600:210
+mur_haut_600:400 -> 800:410
+mur_droite_790:400 -> 800:600
+mur_gauche_0:200 -> 10:400
+mur_droite_790:400 -> 800:600
+mur_gauche_0:400 -> 10:600
+mur_bas_0:590 -> 200:600
+mur_bas_200:190 -> 400:200
+mur_bas_400:390 -> 600:400
+mur_bas_600:590 -> 800:600
+mur_droite_790:400 -> 800:600
+ligne 5 : g;h;0 h;0;0 h;0;0 h;d;0
+ligne 6 : 
+ligne 7 : 0 5 1 h;d
+[0], [5], [1], [h;d], 
+[3], [1], [S], [:], [0], [0], [0], [4], [Sortie], 
+[3], [4], [S], [:], [0], [0], [0], [3], [Sortie], 
+[6], [4], [S], [:], [2], [0], [0], [0], 
+[7], [0], [1], [b;g], 

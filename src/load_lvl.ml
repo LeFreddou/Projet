@@ -25,30 +25,40 @@ let int_carac line i =
   let l,a = next_carac line i in 
   l, int_of_string a  
 
-let rec load_colonne ligne_murs x_mur x_lab y_lab ligne colonne =
+let rec load_wall murs x_mur y_mur ligne colonne =
+  match murs with 
+  [] -> ()
+  |mur :: murs -> 
+    let () = match mur with 
+      "h" -> 
+        ignore(Wall.create (Printf.sprintf "mur_haut_%n:%n" x_mur y_mur) x_mur y_mur 200 10 black);
+        Gfx.debug "mur_haut_%n:%n -> %n:%n\n%!" x_mur y_mur (x_mur+200) (y_mur+10)
+      |"b" -> let y_mur = y_mur + 190 in 
+        ignore(Wall.create (Printf.sprintf "mur_bas_%n:%n" x_mur y_mur) x_mur y_mur 200 10 black);
+        Gfx.debug "mur_bas_%n:%n -> %n:%n\n%!" x_mur y_mur (x_mur+200) (y_mur+10)
+      |"g" -> 
+        ignore(Wall.create (Printf.sprintf "mur_gauche_%n:%n" x_mur y_mur) x_mur y_mur 10 200 black);
+        Gfx.debug "mur_gauche_%n:%n -> %n:%n\n%!" x_mur y_mur (x_mur+10) (y_mur+200)
+      |"d" -> let x_mur = x_mur + 190 in 
+        ignore(Wall.create (Printf.sprintf "mur_droite_%n:%n" x_mur y_mur) x_mur y_mur 10 200 black);
+        Gfx.debug "mur_droite_%n:%n -> %n:%n\n%!" x_mur y_mur (x_mur+10) (y_mur+200)
+      |"0" -> ()
+      |_ -> Gfx.debug "Mur mal créé ligne n°%n colonne n°%n \n%!" ligne colonne
+      in
+    load_wall murs x_mur y_mur ligne colonne
+
+
+    
+let rec load_colonne ligne_murs y_mur x_lab y_lab ligne colonne =
   (**
       [load_colonne ligne_murs x_mur x_lab y_lab ligne colonne]*)
   if ligne_murs = [] then () 
   else begin
-    let y_mur = colonne * taille_case + y_lab in 
+    let x_mur = colonne * taille_case + x_lab in 
     let ligne_murs, mur = next_carac ligne_murs (3+ ligne) in 
     let murs = String.split_on_char ';' mur in 
     (*les 3 carac d'une case*)
-    for i = 1 to 3 do 
-      let murs, mur = next_carac murs (3+ ligne) in 
-      match mur with 
-      "h" -> 
-        ignore(Wall.create (Printf.sprintf "mur_haut_%n:%n" x_mur y_mur) x_mur y_mur 200 10 black) 
-      |"b" -> let y_mur = y_mur + 190 in 
-        ignore(Wall.create (Printf.sprintf "mur_bas_%n:%n" x_mur y_mur) x_mur y_mur 200 10 black)
-      |"g" -> 
-        ignore(Wall.create (Printf.sprintf "mur_gauche_%n:%n" x_mur y_mur) x_mur y_mur 10 200 black)
-      |"d" -> let x_mur = x_mur + 190 in 
-        ignore(Wall.create (Printf.sprintf "mur_droite_%n:%n" x_mur y_mur) x_mur y_mur 10 200 black)
-      |"0" -> ()
-      |_ -> Gfx.debug "Mur mal créé ligne n°%n colonne n°%n \n%!" ligne colonne;
-        failwith (Printf.sprintf "Mur mal créé ligne n°%n colonne n°%n " ligne colonne ) 
-      done;
+    load_wall murs x_mur y_mur ligne colonne;
     load_colonne ligne_murs x_mur x_lab y_lab ligne (colonne+1)
   end 
   
@@ -56,11 +66,11 @@ let rec load_colonne ligne_murs x_mur x_lab y_lab ligne colonne =
 let rec load_walls line file x_lab y_lab ligne =
   (**
       [load_walls line file x_lab y_lab ligne]*)
-  if line = "\n" then file 
+  if line = "" then file 
   else begin 
-  let x_mur = ligne * taille_case + x_lab in 
+  let y_mur = ligne * taille_case + y_lab in 
   let ligne_murs = String.split_on_char  ' ' line in 
-  load_colonne ligne_murs x_mur x_lab y_lab ligne 0;
+  load_colonne ligne_murs y_mur x_lab y_lab ligne 0;
   let file, line = new_line file 4 in 
   load_walls line file x_lab y_lab (ligne+1)
   end
@@ -99,13 +109,20 @@ let lil_zone lil_x_zone lil_y_zone type_zone case =
             case
     |_ -> case
 
+let rec affiche_case case =
+  match case with
+  [] -> Gfx.debug "\n%!"
+  |a::l -> Gfx.debug "[%s], " a;
+  affiche_case l
+
 
 let rec load_zone line file x_lab y_lab =
   (**
       [load_zone line file x_lab y_lab]*)
-  if line = "\n" then file 
+  if line = "" then file 
   else begin 
     let case = String.split_on_char ' ' line in 
+    affiche_case case;
     let case, x_zone = int_carac case 7 in 
     let x_zone = x_zone * 100 - x_lab in
     let case, y_zone = int_carac case 7 in 
@@ -139,59 +156,30 @@ let rec load_zone line file x_lab y_lab =
             ignore(lil_zone lil_x_zone lil_y_zone type_zone case)
             
 
-    |_ -> ()
+    |_ -> 
+      Gfx.debug "ligne buggée : %s\n%!" line
   in
   let file, line = new_line file 6 in 
   load_zone line file x_lab y_lab
   end
-
-let level = ref None
-
-let load_file dst path =
-  dst := Some (Gfx.load_file path);
-  Gfx.debug "ressource loadé\n%!"
-
-let wait_file rsc _dt =
-  match !rsc with
-    None -> failwith "Error"
-    | Some r -> not (Gfx.resource_ready r)
-
-
-let create_file lvl = 
-  let path = match lvl with
-  0 -> "resources/files/test.level"
-  |1 -> "resources/files/01.level"
-  |2 -> "resources/files/02.level"
-  |_ -> Gfx.debug "Pas de niveau \n%!";
-        failwith "Pas de niveau"
-  in
-  Gfx.debug "Chemin trouvé\n%!";
-  load_file level path;
-  Gfx.main_loop (wait_file level);
-  Gfx.debug "resource chargée\n%!";
-  match !level with 
-  None -> Gfx.debug "Pas de niveau \n%!";
-  assert false
-  |Some r -> try Gfx.get_resource r with e ->let error = Printexc.to_string e in Gfx.debug "Why %s \n%!" error;
-  failwith "Je sais pas honnêtement"
 
 
 
 
 let load_lvl lvl =
   Gfx.debug "début loading\n%!";
-  let file = create_file lvl in 
+  let file = Level_manager.create_file lvl in 
   Gfx.debug "fichier loadé\n%!";
   (*Ligne 1 joueur*)
   let file = String.split_on_char '\n' file in 
   let file, line = new_line file 1 in 
   Gfx.debug "ligne 1 : %s\n%!" line;
-  let joueur = String.split_on_char ' ' line in
+  (*let joueur = String.split_on_char ' ' line in
   let joueur, x_player = int_carac joueur 1 in
   let joueur, y_player = int_carac joueur 1 in
   let player = Player.create "player" x_player y_player 10 10 red in 
   (* les directions sont pas encore prises en compte*)
-  let camera = Camera.create "camera" 0 0 800 600 in 
+  let camera = Camera.create "camera" 0 0 800 600 in *)
   (*Ligne 2 labyrinthe*)
   let file, line = new_line file 2 in 
   Gfx.debug "ligne 2 : %s\n%!" line;
@@ -204,102 +192,27 @@ let load_lvl lvl =
   Gfx.debug "ligne 3 : %s\n%!" line;
 
   (*Ligne 4 murs*)
-  let line = "remplissage" in 
+  let file, line = new_line file 4 in 
+  Gfx.debug "ligne 4 : %s\n%!" line;
   let file = load_walls line file x_lab y_lab 0 in 
   
 
 
   (*ligne 5*)
-
+  
+  Gfx.debug "ligne 5 : %s\n%!" line;
   (*ligne 6*)
   let file, line = new_line file 6 in 
-  Gfx.debug "%s\n%!" line;
+  Gfx.debug "ligne 6 : %s\n%!" line;
 
   (*ligne 7 : les zones*)
-  let line ="remplissage" in 
+  let file, line = new_line file 7 in 
+  Gfx.debug "ligne 7 : %s\n%!" line; 
   ignore(load_zone line file x_lab y_lab);  
   
-  player, camera
+  (*player, camera*)
 
 
 
 
 
-
-
-
-
-
-(*while (!line != "\n") do (*Je sais pas si ça marche, à tester quand le bordel voudra bien marcher*)
-    (*ligne par ligne*)
-    
-    let x_mur = !ligne * taille_case + x_lab in 
-    let line = ref (input_line file) in 
-    let ligne_murs = String.split_on_char  ' ' !line in 
-    while (not(List.is_empty ligne_murs)) do 
-      (*colonne par colonne*)
-      let y_mur = !colonne * taille_case + y_lab in 
-      let ligne_murs, mur = next_carac ligne_murs (3+ !ligne) in 
-      let murs = String.split_on_char ';' mur in 
-      (*les 3 carac d'une case*)
-      for i = 1 to 3 do 
-        let murs, mur = next_carac murs (3+ !ligne) in 
-        match mur with 
-        "h" -> 
-          ignore(Wall.create (Printf.sprintf "mur_haut_%n:%n" x_mur y_mur) x_mur y_mur 200 10 black) 
-        |"b" -> let y_mur = y_mur + 190 in 
-          ignore(Wall.create (Printf.sprintf "mur_bas_%n:%n" x_mur y_mur) x_mur y_mur 200 10 black)
-        |"g" -> 
-          ignore(Wall.create (Printf.sprintf "mur_gauche_%n:%n" x_mur y_mur) x_mur y_mur 10 200 black)
-        |"d" -> let x_mur = x_mur + 190 in 
-          ignore(Wall.create (Printf.sprintf "mur_droite_%n:%n" x_mur y_mur) x_mur y_mur 10 200 black)
-        |"0" -> ()
-        |_ -> Gfx.debug "Mur mal créé ligne n°%n colonne n°%n \n%!" !ligne !colonne;
-          failwith (Printf.sprintf "Mur mal créé ligne n°%n colonne n°%n " !ligne !colonne ) 
-
-      done; (*fin de la case*)
-      colonne := !colonne +1
-    done; (*fin de la ligne*)
-    colonne := 0;
-    ligne := !ligne +1
-  done ; (*fin de la partie mur WOUHOUUUUUU*)
-  *)
-
-
-
-
-
-
-  (*while (!line != "\n") do 
-    let line = ref (input_line file) in 
-    let case = String.split_on_char ' ' !line in 
-    let case, x_zone = int_carac case 7 in 
-    let x_zone = x_zone * 100 - x_lab in
-    let case, y_zone = int_carac case 7 in 
-    let y_zone = y_zone * 100 - y_lab in 
-    let case, type_zone = next_carac case 7 in 
-    match type_zone with 
-    "1" -> let case, dir_zone = next_carac case 7 in 
-           let dir_zone = ref (String.split_on_char ';' dir_zone) in 
-           let haut,bas,gauche,droite = ref false, ref false, ref false, ref false in 
-           while (not(List.is_empty !dir_zone)) do 
-            match List.hd !dir_zone with 
-              "h" -> haut := true;
-              |"b"-> bas := true;
-              |"g"-> gauche := true;
-              |"d"-> droite := true;
-              |_ -> Gfx.debug "Mauvaise direction enregistrée sur la case %n:%n" x_zone y_zone;
-                    failwith (Printf.sprintf "Mauvaise direction enregistrée sur la case %n:%n" x_zone y_zone)
-            dir_zone := match !dir_zone with a::l -> l |_ -> [];
-          done;
-          ignore(Zone.create_moov (Printf.sprintf "Zone_Moov_%n:%n" x_zone y_zone) x_zone y_zone 100 100 violet !haut !bas !gauche !droite)
-    |"2" -> ignore(Zone.create (Printf.sprintf "Zone_Death_%n:%n" x_zone y_zone) x_zone y_zone 100 100 2)
-    |"3" -> let case, sibling = next_carac case 7 in
-            ignore(Zone.create_tp_entree (Printf.sprintf "Tp_enter_%n:%n" x_zone y_zone) sibling x_zone y_zone 100 100)
-    |"4" -> let case, sibling = next_carac case 7 in 
-            ignore(Zone.create sibling x_zone y_zone 100 100 4)
-    |"S" -> ()
-    |_ -> ()
-
-  done;
-*)

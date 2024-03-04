@@ -26,7 +26,7 @@ let create id x y w h effect =
   let () = match effect with
   4 ->z#texture#set trans_blue 
   |5 -> z#texture#set trans_light_blue
-  |_ -> z # texture # set trans_black
+  |_ -> z # texture # set trans_yellow
 in 
   z # id # set id;
   z # layer # set 3;

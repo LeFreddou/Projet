@@ -21,7 +21,7 @@ let update _dt el =
   y := 0.;
   Seq.iter ( fun (e : t) -> 
   let () = match Gfx.poll_event () with
-    KeyDown s -> set_key s; Gfx.debug "%s\n%!"s;
+    KeyDown s -> set_key s; if false then Gfx.debug "%s\n%!"s;
     | KeyUp s -> unset_key s
     | _ -> () in 
     if (has_key "q" && (e#gauche#get || !debug)) then x := !x -. 0.25;

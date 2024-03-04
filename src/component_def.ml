@@ -149,6 +149,7 @@ class movable =
 
 class collidable =
   object 
+    inherit id
     inherit position
     inherit velocity
     inherit layer
