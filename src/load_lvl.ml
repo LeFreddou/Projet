@@ -10,6 +10,7 @@ let black = Texture.color (Gfx.color 0 0 0 255)
 let violet = Texture.color (Gfx.color 102 0 102 255)
 let trans_blue = Texture.color (Gfx.color 0 0 255 128)
 let trans_red = Texture.color (Gfx.color 255 0 0 128)
+let load_text = true
 
 
 let rec affiche_case case =
@@ -99,8 +100,8 @@ let lil_zone lil_x_zone lil_y_zone type_zone case =
     "1" ->  let case, dir_zone = next_carac case 7 in 
             let dir_zone = String.split_on_char ';' dir_zone in 
             let haut,bas,gauche,droite = load_moov_zones dir_zone false false false false lil_x_zone lil_y_zone in 
-            
-            ignore(Zone.create_moov (Printf.sprintf "Zone_Moov_%n:%n" lil_x_zone lil_y_zone) lil_x_zone lil_y_zone (taille_zone/2) (taille_zone/2) (Texture_manager.load_texture_img haut bas gauche droite) haut bas gauche droite);
+            let text = if load_text then (Texture_manager.load_texture_img haut bas gauche droite) else violet in  
+            ignore(Zone.create_moov (Printf.sprintf "Zone_Moov_%n:%n" lil_x_zone lil_y_zone) lil_x_zone lil_y_zone (taille_zone/2) (taille_zone/2) text haut bas gauche droite);
             case
     
     |"2" -> ignore(Zone.create_death (Printf.sprintf "Zone_Death_%n:%n" lil_x_zone lil_y_zone) lil_x_zone lil_y_zone (taille_zone/2) (taille_zone/2));
@@ -133,7 +134,8 @@ let rec load_zone line file x_lab y_lab =
     "1" ->  let case, dir_zone = next_carac case 7 in 
             let dir_zone = String.split_on_char ';' dir_zone in 
             let haut,bas,gauche,droite = load_moov_zones dir_zone false false false false x_lab y_lab in 
-            ignore(Zone.create_moov (Printf.sprintf "Zone_Moov_%n:%n" x_zone y_zone) x_zone y_zone taille_zone taille_zone (Texture_manager.load_texture_img haut bas gauche droite) haut bas gauche droite)
+            let text = if load_text then (Texture_manager.load_texture_img haut bas gauche droite) else violet in  
+            ignore(Zone.create_moov (Printf.sprintf "Zone_Moov_%n:%n" x_zone y_zone) x_zone y_zone taille_zone taille_zone text haut bas gauche droite)
     
     |"2" -> ignore(Zone.create_death (Printf.sprintf "Zone_Death_%n:%n" x_zone y_zone) x_zone y_zone taille_zone taille_zone)
     
@@ -176,6 +178,7 @@ let rec load_zone line file x_lab y_lab =
 
 let load_lvl lvl =
   let file = Level_manager.create_file lvl in 
+  Gfx.debug "Gé ouvert \n%!";
   (*Ligne 1 joueur*)
   let file = String.split_on_char '\n' file in 
   let file, line = new_line file 1 in 
@@ -210,7 +213,7 @@ let load_lvl lvl =
   (*ligne 7 : les zones*)
   let file, line = new_line file 7 in 
   ignore(load_zone line file x_lab y_lab);  
-  
+  Gfx.debug "Gé fini \n%!";
   (*player, camera*)
 
 
