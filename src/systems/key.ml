@@ -5,7 +5,7 @@ type t = movable
 
 let init _ = () 
 let dt = 1000. /. 60.
-let debug = ref false
+let debug = ref true
 let x = ref 0.
 let y = ref 0.
 

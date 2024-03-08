@@ -25,7 +25,6 @@ let create_file lvl =
   |_ -> Gfx.debug "Pas de niveau \n%!";
         failwith "Pas de niveau"
   in
-  Gfx.debug "Chemin trouvé\n%!";
   let level = Hashtbl.find level_table path in 
   try Gfx.get_resource level with e ->let error = Printexc.to_string e in Gfx.debug "%s \n%!" error;
   failwith "Je sais pas honnêtement"

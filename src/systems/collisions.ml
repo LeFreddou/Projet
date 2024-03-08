@@ -21,7 +21,7 @@ let el2 = Seq.filter_map ( fun (e2 : t) ->if e2# layer #get  = 2 then Some e2 el
             Rect.has_origin s_pos s_rect 
             && not (Vector.is_zero v1)
           then begin 
-            Gfx.debug "Pos : %n:%f\n%!" (int_of_float e1#pos#get.x) e1#pos#get.y;
+            Gfx.debug "Pos : %n:%f id : %s \n%!" (int_of_float e1#pos#get.x) e1#pos#get.y e2#id#get;
             let a = Vector.{ x = s_pos.x; y = 0.0 } in 
             let b = Vector.{ x = float s_rect.width +. s_pos.x; y = 0.0 } in 
             let c = Vector.{ x = 0.0; y = s_pos.y } in 
