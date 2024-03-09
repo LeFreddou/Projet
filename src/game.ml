@@ -94,7 +94,7 @@ let init dt =
   init_zone();
   end 
   else begin
-  ignore(Load_lvl.load_lvl 0);
+  ignore(Load_lvl.load_lvl 1);
   end;
   Ecs.System.init_all dt;
   false

@@ -10,7 +10,7 @@ let black = Texture.color (Gfx.color 0 0 0 255)
 let violet = Texture.color (Gfx.color 102 0 102 255)
 let trans_blue = Texture.color (Gfx.color 0 0 255 128)
 let trans_red = Texture.color (Gfx.color 255 0 0 128)
-let load_text = true
+let load_text = false
 
 
 let rec affiche_case case =
