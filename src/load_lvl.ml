@@ -1,6 +1,3 @@
-open Component_def
-open System_def
-
 let taille_wall = 200
 let taille_zone = 100
 
@@ -12,13 +9,6 @@ let trans_blue = Texture.color (Gfx.color 0 0 255 128)
 let trans_red = Texture.color (Gfx.color 255 0 0 128)
 let load_text = true
 
-
-let rec affiche_case case =
-  match case with
-  [] -> Gfx.debug "\n%!"
-  |a::[] -> Gfx.debug "[%s] \n%!" a
-  |a::l -> Gfx.debug "[%s], " a;
-  affiche_case l
 
 let new_line file i = 
   match file with 

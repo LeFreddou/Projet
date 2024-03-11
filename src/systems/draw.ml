@@ -41,19 +41,19 @@ let update _dt el =
   let ww, wh = Gfx.get_context_logical_size ctx in
   Gfx.set_color ctx white;
   Gfx.fill_rect ctx surf 0 0 ww wh;
-  let cam = Seq.filter_map (fun (e:t) -> if e#layer#get = 0 then Some e else None) el in
+  let cam = Seq.find (fun (e:t) -> if e#layer#get = 0 then true else false) el in
+  let cam = match cam with 
+    |Some p -> p 
+    |_ -> failwith ("pas de caméra")
+  in
   let walls = Seq.filter_map (fun (e:t) -> if e#layer#get = 2 then Some e else None) el in
   let zones = Seq.filter_map (fun (e:t) -> if e#layer#get = 3 then Some e else None) el in
-  let player = Seq.filter_map (fun (e:t) -> if e#layer#get = 1 then Some e else None) el in
-  Seq.iter (fun cam ->
-    Seq.iter (fun d ->
-      update_aux cam d ctx surf
-    ) zones;
-    Seq.iter (fun d ->
-      update_aux cam d ctx surf
-    ) player;
-    Seq.iter (fun d ->
-      update_aux cam d ctx surf
-    ) walls
-  )cam;
+  let player = Seq.find (fun (e:t) -> if e#layer#get = 1 then true else false) el in
+  let player = match player with 
+    |Some p -> p 
+    |_ -> failwith ("pas de joueur")
+  in
+  Seq.iter (fun d -> update_aux cam d ctx surf) zones;
+  update_aux cam player ctx surf;
+  Seq.iter (fun d -> update_aux cam d ctx surf) walls;
   Gfx.commit ctx

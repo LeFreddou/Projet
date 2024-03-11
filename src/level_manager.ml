@@ -1,5 +1,3 @@
-open Component_def
-open System_def
 
 
 let level_table = Hashtbl.create 8

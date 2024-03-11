@@ -1,5 +1,3 @@
-open Component_def
-open System_def
 
 let texture_table = Hashtbl.create 32
 
