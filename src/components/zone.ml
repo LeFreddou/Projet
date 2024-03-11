@@ -16,7 +16,8 @@ let black = Texture.color (Gfx.color 0 0 0 255)
   2 = death zone
   3 = téléportation entrée ?
   4 = tp sortie
-  5 = ice*)
+  5 = ice
+  6 = victoire*)
 let create id x y w h effect =
   (**
       [create id x y w h effect]*)
@@ -26,13 +27,19 @@ let create id x y w h effect =
   let () = match effect with
   4 ->z#texture#set trans_blue 
   |5 -> z#texture#set trans_light_blue
-  |_ -> z # texture # set trans_yellow
+  |6 -> z # texture # set trans_yellow
+  |_ -> z #texture # set trans_blue
 in 
   z # id # set id;
   z # layer # set 3;
   z #effect # set effect;
   Draw_system.register ( z:> drawable);
   Zonable_System.register (z :> zonable);
+  Next_lvl_syst.register (z :>cancellable);
+  z #remove#set (fun () -> 
+    Zonable_System.unregister (z :> zonable);
+    Draw_system.unregister (z :> drawable));
+    Next_lvl_syst.register (z :>cancellable);
   z
 
 
@@ -52,6 +59,11 @@ let create_moov id x y w h texture haut bas gauche droite =
   z #effect # set 1;
   Draw_system.register ( z:> drawable);
   Zonable_System.register (z :> zonable);
+  Next_lvl_syst.register (z :>cancellable);
+  z #remove#set (fun () -> 
+    Zonable_System.unregister (z :> zonable);
+    Draw_system.unregister (z :> drawable));
+    Next_lvl_syst.register (z :>cancellable);
   z
 
 
@@ -69,6 +81,11 @@ let create_death id x y w h =
   z # droite # set true;
   Draw_system.register ( z:> drawable);
   Zonable_System.register (z :> zonable);
+  Next_lvl_syst.register (z :>cancellable);
+  z #remove#set (fun () -> 
+    Zonable_System.unregister (z :> zonable);
+    Draw_system.unregister (z :> drawable));
+    Next_lvl_syst.register (z :>cancellable);
   z
 
 
@@ -84,4 +101,9 @@ let create_tp_entree id sibling x y w h =
   z # effect # set 3;
   Draw_system.register ( z:> drawable);
   Zonable_System.register (z :> zonable);
+  Next_lvl_syst.register (z :>cancellable);
+  z #remove#set (fun () -> 
+    Zonable_System.unregister (z :> zonable);
+    Draw_system.unregister (z :> drawable));
+    Next_lvl_syst.register (z :>cancellable);
   z

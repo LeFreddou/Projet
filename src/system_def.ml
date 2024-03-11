@@ -20,3 +20,7 @@ let () = System.register (module Move_system)
 module Draw_system = System.Make (Draw)
 
 let () = System.register (module Draw_system)
+
+module Next_lvl_syst = System.Make (Next_lvl)
+
+let () = System.register (module Next_lvl_syst)

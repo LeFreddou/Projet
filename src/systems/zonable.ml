@@ -81,6 +81,7 @@ let update _dt (el : t Seq.t) =
             
               e1#velocity#set n_vel;
               e2#iced#set true
+        |6 -> e1#won#set true
         |_ -> ()
       end
       else 

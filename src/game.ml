@@ -7,11 +7,11 @@ let () = Global.init (Format.sprintf "game_canvas:%dx%d:r=presentvsync" 800 600)
 let blue = Texture.color (Gfx.color 0 0 255 255)
 let black = Texture.color (Gfx.color 0 0 0 255)
 let red = Texture.color (Gfx.color 255 0 0 255)
-let level = 2
+let level = 4 
 
 let camera = Camera.create "camera" 0 0 800 600 
 
-let player = Player.create "player" 50 470 10 10 red
+let player = Player.create "player" 50 470 10 10 red level
 
 let load_image dst path =
   let ctx = Gfx.get_context(Global.window ()) in

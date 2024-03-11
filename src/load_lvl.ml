@@ -147,6 +147,8 @@ let rec load_zone line file x_lab y_lab =
     
     |"4" -> let case, sibling = next_carac case 7 in 
             ignore(Zone.create sibling x_zone y_zone taille_zone taille_zone 4)
+
+    |"6" -> ignore(Zone.create (Printf.sprintf "Victoire_%n:%n" x_zone y_zone) x_zone y_zone taille_zone taille_zone 6)
     
     |"S" -> let case, deux_points = next_carac case 7 in 
             let lil_x_zone = x_zone in 

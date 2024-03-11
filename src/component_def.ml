@@ -43,7 +43,11 @@ class sibling =
     method sibling = sibling
   end
 
-
+class won =
+  object 
+    val won = Component.def (false)
+    method won = won 
+  end
 
 (*0 = camera
   1 = player
@@ -120,6 +124,11 @@ class in_bas =
     method in_haut = in_haut
   end
 
+  class level =
+  object
+    val level = Component.def(0)
+    method level = level 
+  end
 (*Complex components*)
 
 class zone_moov = 
@@ -182,13 +191,27 @@ class zonable =
     inherit zone_moov
     inherit zone_tp
     inherit zone_ice
+    inherit won
   end
+
+
+class cancellable = 
+  object
+    inherit id
+    inherit layer
+    inherit won
+    inherit level
+    val remove = Component.def (fun () ->())
+    method remove = remove
+  end
+
 
 class wall =
   object
     inherit drawable
     inherit id
     inherit! collidable
+    inherit! cancellable
   end
 
 class player = 
@@ -199,6 +222,7 @@ class player =
     inherit! collidable
     inherit! zonable 
     inherit! zone_moov
+    inherit! cancellable
   end
 
 class zone = 
@@ -207,6 +231,7 @@ class zone =
     inherit id
     inherit! layer
     inherit! zonable
+    inherit! cancellable
   end
 
 class camera =
