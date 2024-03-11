@@ -10,20 +10,20 @@ let black = Texture.color (Gfx.color 0 0 0 255)
 let violet = Texture.color (Gfx.color 102 0 102 255)
 let trans_blue = Texture.color (Gfx.color 0 0 255 128)
 let trans_red = Texture.color (Gfx.color 255 0 0 128)
-let load_text = false
+let load_text = true
 
 
 let rec affiche_case case =
   match case with
   [] -> Gfx.debug "\n%!"
-  |a::[] -> Gfx.debug "[%s]\n%!" a
+  |a::[] -> Gfx.debug "[%s] \n%!" a
   |a::l -> Gfx.debug "[%s], " a;
   affiche_case l
 
 let new_line file i = 
   match file with 
   a::l -> l,a 
-  |_ -> failwith "Fichier fini"
+  |_ -> failwith (Printf.sprintf"Fichier fini ligne : %d" i )
 
 let next_carac line i =
   match line with
@@ -33,7 +33,8 @@ let next_carac line i =
 
 let int_carac line i =
   let l,a = next_carac line i in 
-  l, int_of_string a  
+  Gfx.debug "%s ligne %d \n %!" a i;
+  l, int_of_string a
 
 let rec load_wall murs x_mur y_mur ligne colonne =
   match murs with 
@@ -83,7 +84,7 @@ let rec load_walls line file x_lab y_lab ligne =
 
 
 let rec load_moov_zones dir_zone haut bas gauche droite x_zone y_zone=
-  if dir_zone = [] then haut,gauche,bas, droite 
+  if dir_zone = [] then haut,bas,gauche, droite 
   else begin 
     let dir_zone,a = next_carac dir_zone 7 in 
     match a with 
@@ -116,7 +117,12 @@ let lil_zone lil_x_zone lil_y_zone type_zone case =
             case
     |_ -> case
 
-
+let affiche_dir haut bas gauche droite =
+  let h = if haut then "true" else "false" in 
+  let b = if bas then "true" else "false" in 
+  let g = if gauche then "true" else "false" in 
+  let d = if droite then "true" else "false" in 
+  Gfx.debug "haut : %s  bas : %s gauche : %s  droite : %s \n%!" h b g d
 
 
 let rec load_zone line file x_lab y_lab =
@@ -133,8 +139,13 @@ let rec load_zone line file x_lab y_lab =
     let () = match type_zone with 
     "1" ->  let case, dir_zone = next_carac case 7 in 
             let dir_zone = String.split_on_char ';' dir_zone in 
+            affiche_case dir_zone;
             let haut,bas,gauche,droite = load_moov_zones dir_zone false false false false x_lab y_lab in 
-            let text = if load_text then (Texture_manager.load_texture_img haut bas gauche droite) else violet in  
+            affiche_dir haut bas gauche droite;
+            let text = try if load_text then (Texture_manager.load_texture_img haut bas gauche droite) else violet 
+                       with e ->begin 
+                        let error = Printexc.to_string e in Gfx.debug "%s \n%!" error;
+                        failwith (error) end in  
             ignore(Zone.create_moov (Printf.sprintf "Zone_Moov_%n:%n" x_zone y_zone) x_zone y_zone taille_zone taille_zone text haut bas gauche droite)
     
     |"2" -> ignore(Zone.create_death (Printf.sprintf "Zone_Death_%n:%n" x_zone y_zone) x_zone y_zone taille_zone taille_zone)
@@ -178,7 +189,6 @@ let rec load_zone line file x_lab y_lab =
 
 let load_lvl lvl =
   let file = Level_manager.create_file lvl in 
-  Gfx.debug "Gé ouvert \n%!";
   (*Ligne 1 joueur*)
   let file = String.split_on_char '\n' file in 
   let file, line = new_line file 1 in 
@@ -189,31 +199,26 @@ let load_lvl lvl =
   (* les directions sont pas encore prises en compte*)
   let camera = Camera.create "camera" 0 0 800 600 in *)
   
-  
   (*Ligne 2 labyrinthe*)
   let file, line = new_line file 2 in 
   let lab = String.split_on_char ' ' line in 
+  
   let lab, x_lab = int_carac lab 2 in 
-  let lab, y_lab = int_carac lab 2 in 
-
+  let lab, y_lab = int_carac lab 3 in 
   (*Ligne 3*)
   let file, line = new_line file 3 in 
-
   (*Ligne 4 murs*)
   let file, line = new_line file 4 in 
   let file = load_walls line file x_lab y_lab 0 in 
-  
 
 
   (*ligne 5*)
-  
   (*ligne 6*)
   let file, line = new_line file 6 in 
 
   (*ligne 7 : les zones*)
   let file, line = new_line file 7 in 
   ignore(load_zone line file x_lab y_lab);  
-  Gfx.debug "Gé fini \n%!";
   (*player, camera*)
 
 

@@ -15,7 +15,7 @@ let paths = ["resources/images/all_moov.png";
              "resources/images/bottom_left.png";
              "resources/images/bottom_right.png";
              "resources/images/bottom.png";
-             "resources/images/right_left.png";
+             "resources/images/left_right.png";
              "resources/images/left.png";
              "resources/images/right.png";
              "resources/images/placeholder.png"]
@@ -50,13 +50,13 @@ let load_texture_img haut bas gauche droite =
   |false ,true,true,false -> "resources/images/bottom_left.png"
   |false, true, false, true-> "resources/images/bottom_right.png"
   |false, true, false, false-> "resources/images/bottom.png"
-  |false,false,true,true -> "resources/images/right_left.png"
+  |false,false,true,true -> "resources/images/left_right.png"
   |false, false, true, false-> "resources/images/left.png"
   |false, false, false, true-> "resources/images/right.png"
   |_ -> "resources/images/placeholder.png"
   in
   let ressource = Hashtbl.find texture_table path in 
-  let bg_surf = try Gfx.get_resource ressource with e -> let msg = Printexc.to_string e in Gfx.debug "%s\n%!" msg; failwith msg
+  let bg_surf = try Gfx.get_resource ressource with e -> let msg = Printexc.to_string e in Gfx.debug "error : %s\n%!" msg; failwith msg
   in
   let ctx = Gfx.get_context (Global.window ()) in
   Texture.image_from_surface ctx bg_surf 0 0 256 256 100 100
