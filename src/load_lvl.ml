@@ -33,7 +33,6 @@ let next_carac line i =
 
 let int_carac line i =
   let l,a = next_carac line i in 
-  Gfx.debug "%s ligne %d \n %!" a i;
   l, int_of_string a
 
 let rec load_wall murs x_mur y_mur ligne colonne =
@@ -117,12 +116,7 @@ let lil_zone lil_x_zone lil_y_zone type_zone case =
             case
     |_ -> case
 
-let affiche_dir haut bas gauche droite =
-  let h = if haut then "true" else "false" in 
-  let b = if bas then "true" else "false" in 
-  let g = if gauche then "true" else "false" in 
-  let d = if droite then "true" else "false" in 
-  Gfx.debug "haut : %s  bas : %s gauche : %s  droite : %s \n%!" h b g d
+
 
 
 let rec load_zone line file x_lab y_lab =
@@ -139,9 +133,7 @@ let rec load_zone line file x_lab y_lab =
     let () = match type_zone with 
     "1" ->  let case, dir_zone = next_carac case 7 in 
             let dir_zone = String.split_on_char ';' dir_zone in 
-            affiche_case dir_zone;
             let haut,bas,gauche,droite = load_moov_zones dir_zone false false false false x_lab y_lab in 
-            affiche_dir haut bas gauche droite;
             let text = try if load_text then (Texture_manager.load_texture_img haut bas gauche droite) else violet 
                        with e ->begin 
                         let error = Printexc.to_string e in Gfx.debug "%s \n%!" error;
