@@ -6,7 +6,11 @@ let level_table = Hashtbl.create 8
 
 let paths = ["resources/files/test.level";
              "resources/files/01.level";
-             "resources/files/02.level"]
+             "resources/files/02.level";
+             "resources/files/03.level";
+             "resources/files/04.level";
+             "resources/files/05.level"
+             ]
 
 let load_all_level _dt =
   List.iter (fun path -> Hashtbl.add level_table path (Gfx.load_file path)) paths;
@@ -22,6 +26,9 @@ let create_file lvl =
   0 -> "resources/files/test.level"
   |1 -> "resources/files/01.level"
   |2 -> "resources/files/02.level"
+  |3 -> "resources/files/03.level"
+  |4 -> "resources/files/04.level"
+  |5 -> "resources/files/05.level"
   |_ -> Gfx.debug "Pas de niveau \n%!";
         failwith "Pas de niveau"
   in
