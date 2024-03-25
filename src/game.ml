@@ -7,7 +7,7 @@ let () = Global.init (Format.sprintf "game_canvas:%dx%d:r=presentvsync" 800 600)
 let blue = Texture.color (Gfx.color 0 0 255 255)
 let black = Texture.color (Gfx.color 0 0 0 255)
 let red = Texture.color (Gfx.color 255 0 0 255)
-let level = 4 
+let level = 1
 
 let camera = Camera.create "camera" 0 0 800 600 
 
@@ -126,6 +126,21 @@ let chain_functions l =
 
 let update dt =
   Ecs.System.update_all dt;
+  player#deathed#set (player#deathed#get+1);
+  if player#deathed#get = 30 then begin player#moving#set true end;
+  if player#won#get then begin
+    Load_lvl.load_lvl (player#level#get +1);
+    player#level#set (player#level#get +1);
+    player#pos#set Vector.{x=50.;y =460.};
+    player#haut#set true;
+    player#bas#set false;
+    player#gauche#set false;
+    player#droite#set true;
+    camera#pos#set Vector.{x=0.;y=0.};
+    player#deathed#set 0;
+    player#moving#set false;
+    player#won#set false
+  end;
   not (has_key "Enter")
 
 let run () =

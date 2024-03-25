@@ -94,6 +94,18 @@ class gauche =
     method gauche = gauche
   end
 
+class moving =
+  object
+    val moving = Component.def true
+    method moving = moving
+  end
+
+class deathed =
+  object 
+    val deathed = Component.def 0
+    method deathed = deathed
+  end
+
 class iced = 
   object 
     val iced = Component.def false
@@ -154,6 +166,7 @@ class movable =
     inherit velocity
     inherit zone_moov
     inherit layer
+    inherit moving
   end
 
 class collidable =
@@ -163,6 +176,12 @@ class collidable =
     inherit velocity
     inherit layer
     inherit rect
+  end
+
+class zone_death = 
+  object
+    inherit moving
+    inherit deathed
   end
 
 class zone_tp =
@@ -191,6 +210,7 @@ class zonable =
     inherit zone_moov
     inherit zone_tp
     inherit zone_ice
+    inherit zone_death
     inherit won
   end
 

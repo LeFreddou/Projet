@@ -37,6 +37,8 @@ let update _dt (el : t Seq.t) =
          let depart = Vector.{x = 50. ; y = 460.} in
          player#pos#set depart;
          update_moov player e2;
+         player#deathed#set 0;
+         player#moving#set false;
          let cameras = Seq.filter_map (fun (player : t) -> if player#layer#get = 0 then Some player else None) el in
          Seq.iter (fun cam -> cam#pos#set Vector.zero) cameras
         |3 -> let sorties = find_exit e2 el2 in

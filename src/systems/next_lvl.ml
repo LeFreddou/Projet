@@ -18,10 +18,4 @@ in
     let l = ref [] in 
     Seq.iter(fun (obj:t) -> l := obj :: !l) all_obj;
     List.iter (fun (e1:t) -> e1#remove#get ()) !l;
-    
-    (*debut nouveau niveau*)
-    player#level#set (player#level#get + 1);
-    (*Load_lvl.load_lvl player#level#get;*)
-
-    player#won#set false;
   end

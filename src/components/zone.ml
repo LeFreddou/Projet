@@ -107,3 +107,20 @@ let create_tp_entree id sibling x y w h =
     Draw_system.unregister (z :> drawable));
     Next_lvl_syst.register (z :>cancellable);
   z
+
+let create_victory id x y w h =
+  let z = new zone in 
+  z # pos # set Vector.{x = float x +. 50.; y = float y +. 50.};
+  z # rect # set Rect.{width = w; height = h};
+  z # texture # set trans_yellow;
+  z # id # set id;
+  z # layer # set 3;
+  z #effect # set 6;
+  Draw_system.register ( z:> drawable);
+  Zonable_System.register (z :> zonable);
+  Next_lvl_syst.register (z :>cancellable);
+  z #remove#set (fun () -> 
+    Zonable_System.unregister (z :> zonable);
+    Draw_system.unregister (z :> drawable));
+    Next_lvl_syst.register (z :>cancellable);
+  z
