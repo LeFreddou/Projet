@@ -22,7 +22,7 @@
                           Par ex : 2 4 1(b d) on met autant de direc que voulu
                 effet 3 : On a besoin de l'id du sibling : (sibling)
                           Par ex : 2 4 3(feur)
-                effet 4 : On a besoin de l'ib d'origine : (id)
+                effet 4 : On a besoin de l'id d'origine : (id)
                           Par ex : 9 10 4(feur)
                 
                 effet S : EFFET SPECIAL 

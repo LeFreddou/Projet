@@ -7,7 +7,7 @@ let () = Global.init (Format.sprintf "game_canvas:%dx%d:r=presentvsync" 800 600)
 let blue = Texture.color (Gfx.color 0 0 255 255)
 let black = Texture.color (Gfx.color 0 0 0 255)
 let red = Texture.color (Gfx.color 255 0 0 255)
-let level = 10
+let level = 8
 
 let camera = Camera.create "camera" 0 0 800 600 
 
