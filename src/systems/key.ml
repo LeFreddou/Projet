@@ -1,11 +1,10 @@
 open Component_def
-
-
 type t = movable 
 
 let init _ = () 
 let dt = 1000. /. 60.
 let debug = ref false
+let debug_mode = false
 let x = ref 0.
 let y = ref 0.
 
@@ -15,7 +14,6 @@ let has_key, set_key, unset_key =
   (fun s -> Hashtbl.replace h s ()), 
   (fun s-> Hashtbl.remove h s)
 
-
 let update _dt el = 
   x := 0.;
   y := 0.;
@@ -24,10 +22,10 @@ let update _dt el =
     KeyDown s -> set_key s; if false then Gfx.debug "%s\n%!"s;
     | KeyUp s -> unset_key s
     | _ -> () in 
-    if (has_key "q" && e#moving#get && (e#gauche#get || !debug)) then x := !x -. 0.25;
-    if (has_key "d" && e#moving#get && ((e#droite#get) || !debug)) then x := !x +. 0.25;
-    if (has_key "z" && e#moving#get && ((e#haut#get) || !debug)) then y := !y -. 0.25;
-    if (has_key "s" && e#moving#get && ((e#bas#get) || !debug)) then y := !y +. 0.25;
+    if (has_key "q" && e#moving#get && (e#gauche#get || (debug_mode && !debug))) then x := !x -. 0.25;
+    if (has_key "d" && e#moving#get && ((e#droite#get) || (debug_mode && !debug))) then x := !x +. 0.25;
+    if (has_key "z" && e#moving#get && ((e#haut#get) || (debug_mode && !debug))) then y := !y -. 0.25;
+    if (has_key "s" && e#moving#get && ((e#bas#get) || (debug_mode && !debug))) then y := !y +. 0.25;
     if (has_key "a") then debug := false;
     if (has_key "e") then debug := true;
     if (has_key "r") then begin 

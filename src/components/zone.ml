@@ -5,9 +5,7 @@ let trans_black = Texture.color (Gfx.color 0 0 0 128)
 let trans_red = Texture.color (Gfx.color 255 0 0 128)
 let trans_blue = Texture.color (Gfx.color 0 0 255 128)
 let trans_light_blue = Texture.color (Gfx.color 128 128 255 128)
-
 let trans_yellow = Texture.color (Gfx.color 255 255 0 128)
-
 let black = Texture.color (Gfx.color 0 0 0 255)
 
 
@@ -25,10 +23,12 @@ let create id x y w h effect =
   z # pos # set Vector.{x = float x; y = float y};
   z # rect # set Rect.{width = w; height = h};
   let () = match effect with
-  4 ->z#texture#set trans_blue 
-  |5 -> z#texture#set trans_light_blue
-  |6 -> z # texture # set trans_yellow
-  |_ -> z #texture # set trans_blue
+  2 -> z#texture#set trans_black
+  |3 ->z#texture#set trans_red
+  |4 ->z#texture#set trans_blue 
+  |5 ->z#texture#set trans_light_blue
+  |6 ->z#texture#set trans_yellow
+  |_ ->z#texture#set trans_blue
 in 
   z # id # set id;
   z # layer # set 3;
@@ -42,85 +42,31 @@ in
     Next_lvl_syst.register (z :>cancellable);
   z
 
-
 let create_moov id x y w h texture haut bas gauche droite =
   (**
       [create_moov id x y w h texture haut bas gauche droite]*)
-  let z = new zone in 
-  z # id # set id;
-  z # pos # set Vector.{x = float x; y = float y};
-  z # rect # set Rect.{width = w; height = h};
+  let z = create id x y w h 1 in 
   z # texture #set texture;
   z # haut # set haut;
   z # bas # set bas;
   z # gauche # set gauche;
   z # droite # set droite;
-  z # layer # set 3;
-  z #effect # set 1;
-  Draw_system.register ( z:> drawable);
-  Zonable_System.register (z :> zonable);
-  Next_lvl_syst.register (z :>cancellable);
-  z #remove#set (fun () -> 
-    Zonable_System.unregister (z :> zonable);
-    Draw_system.unregister (z :> drawable));
-    Next_lvl_syst.register (z :>cancellable);
   z
 
-
 let create_death id x y w h =
-  let z = new zone in 
-  z # id # set id;
-  z # pos # set Vector.{x = float x; y = float y};
-  z # rect # set Rect.{width = w; height = h};
-  z # texture #set trans_black;
-  z # layer # set 3;
-  z #effect # set 2;
+  let z = create id x y w h 2 in 
   z # haut # set true;
   z # bas # set false;
   z # gauche # set false;
   z # droite # set true;
-  Draw_system.register ( z:> drawable);
-  Zonable_System.register (z :> zonable);
-  Next_lvl_syst.register (z :>cancellable);
-  z #remove#set (fun () -> 
-    Zonable_System.unregister (z :> zonable);
-    Draw_system.unregister (z :> drawable));
-    Next_lvl_syst.register (z :>cancellable);
   z
 
-
-
 let create_tp_entree id sibling x y w h =
-  let z = new zone in 
-  z # pos # set Vector.{x = float x; y = float y};
-  z # rect # set Rect.{width = w; height = h};
-  z # texture # set trans_red;
-  z # id # set id;
-  z # layer # set 3;
+  let z = create id x y w h 3 in 
   z # sibling # set sibling;
-  z # effect # set 3;
-  Draw_system.register ( z:> drawable);
-  Zonable_System.register (z :> zonable);
-  Next_lvl_syst.register (z :>cancellable);
-  z #remove#set (fun () -> 
-    Zonable_System.unregister (z :> zonable);
-    Draw_system.unregister (z :> drawable));
-    Next_lvl_syst.register (z :>cancellable);
   z
 
 let create_victory id x y w h =
-  let z = new zone in 
+  let z = create id x y w h 6 in 
   z # pos # set Vector.{x = float x +. 50.; y = float y +. 50.};
-  z # rect # set Rect.{width = w; height = h};
-  z # texture # set trans_yellow;
-  z # id # set id;
-  z # layer # set 3;
-  z #effect # set 6;
-  Draw_system.register ( z:> drawable);
-  Zonable_System.register (z :> zonable);
-  Next_lvl_syst.register (z :>cancellable);
-  z #remove#set (fun () -> 
-    Zonable_System.unregister (z :> zonable);
-    Draw_system.unregister (z :> drawable));
-    Next_lvl_syst.register (z :>cancellable);
   z

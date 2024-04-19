@@ -7,10 +7,9 @@ let () = Global.init (Format.sprintf "game_canvas:%dx%d:r=presentvsync" 800 600)
 let blue = Texture.color (Gfx.color 0 0 255 255)
 let black = Texture.color (Gfx.color 0 0 0 255)
 let red = Texture.color (Gfx.color 255 0 0 255)
-let level = 0
+let level = 1
 
 let camera = Camera.create "camera" 0 0 800 600 
-
 let player = Player.create "player" 50 470 10 10 red level
 
 let load_image dst path =
@@ -23,7 +22,7 @@ let wait_textures rsc _dt =
     | Some r -> not (Gfx.resource_ready r)
 
 
-
+(*Zone de test créée "à la main"*)
 let init_wall_test () =
   ignore (Wall.create "wall_top" 0 0 800 10 black );
   ignore (Wall.create "wall_bottom"  0 590 800 10 black );
@@ -41,8 +40,7 @@ let init_zone_test () =
   ignore (Zone.create_moov "zone2" 0 500 100 100 texture true false false true )
 
 
-
-
+(*Niveau 10 créé "à la main"*)
 let init_wall () =
   ignore (Wall.create "left_wall" 0 (-200) 10 800 black);
   ignore (Wall.create "bottom_wall" 0 590 1200 10 black);
@@ -59,15 +57,6 @@ let init_wall () =
   ignore (Wall.create "mur_ver_4" 400 (-200) 10 200 black);
   ignore (Wall.create "mur_hor_3" 400 200 410 10 black)
 
-
-
-
-
-
-(*1 = moov
-  2 = death zone
-  3 = téléportation entrée ?
-  4 = tp sortie*)
 let init_zone () = 
   ignore(Zone.create_death "death_right" 1150 400 50 200);
   ignore(Zone.create_death "death_up" 0 (-200) 400 50);
@@ -77,15 +66,6 @@ let init_zone () =
   ignore (Zone.create_moov "bas_gauche" 810 100 100 100 (Texture_manager.load_texture_img false true true false) false true true false);
   ignore (Zone.create_moov "bas_gauche_2" 900 (-390) 100 100 (Texture_manager.load_texture_img false true true false) false true true false);
   ignore (Zone.create "victoire" 650 250 100 100 6 )
-
-
-
-let has_key, set_key, unset_key =
-  let h = Hashtbl.create 16 in
-  (fun s-> Hashtbl.mem h s),
-  (fun s -> Hashtbl.replace h s ()), 
-  (fun s-> Hashtbl.remove h s)
-
 
 
 let init dt =
@@ -99,14 +79,6 @@ let init dt =
   Ecs.System.init_all dt;
   false
 
-
-let has_key, set_key, unset_key =
-  let h = Hashtbl.create 16 in
-  (fun s-> Hashtbl.mem h s),
-  (fun s -> Hashtbl.replace h s ()), 
-  (fun s-> Hashtbl.remove h s)
-
-
 let chain_functions l =
   let todo = ref l in 
   (fun dt -> 
@@ -119,10 +91,6 @@ let chain_functions l =
         todo := ll;
         true
       end)
-
-
-
-
 
 let update dt =
   Ecs.System.update_all dt;
@@ -141,7 +109,7 @@ let update dt =
     player#moving#set false;
     player#won#set false
   end;
-  not (has_key "Enter")
+  true
 
 let run () =
   Gfx.main_loop (chain_functions 

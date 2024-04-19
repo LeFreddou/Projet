@@ -12,7 +12,8 @@ let paths = ["resources/files/test.level";
              "resources/files/07.level";
              "resources/files/08.level";
              "resources/files/09.level";
-             "resources/files/10.level"
+             "resources/files/10.level";
+             "resources/files/10_bis.level"
              ]
 
 let load_all_level _dt =
@@ -37,6 +38,7 @@ let create_file lvl =
   |8 -> "resources/files/08.level"
   |9 -> "resources/files/09.level"
   |10 -> "resources/files/10.level"
+  |11 -> "resources/files/10_bis.level"
   |_ -> Gfx.debug "Pas de niveau \n%!";
         failwith "Pas de niveau"
   in

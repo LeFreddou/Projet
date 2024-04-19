@@ -1,5 +1,4 @@
 open Component_def 
-
 type t = cancellable
 
 let init _ = ()
@@ -12,7 +11,6 @@ let update _dt (el : t Seq.t) =
 
 in
   if player#won#get then begin 
-    
     (*destruction ancien niveau*)
     let all_obj =  Seq.filter_map (fun (e2 : t) -> if e2#layer#get !=1 then Some e2 else None) el in
     let l = ref [] in 

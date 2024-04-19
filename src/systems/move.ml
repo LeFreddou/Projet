@@ -1,10 +1,9 @@
 open Component_def
-
 type t = movable
 
 let init _ = () 
 let dt = 1000. /. 60.
-let free_cam = false
+let free_cam = true
 
 let update _dt el = 
   let autre = Seq.filter_map (fun (e:t) -> if e#layer#get != 0 then Some e else None) el in
@@ -23,5 +22,4 @@ let update _dt el =
         cam#pos#set Vector.{x= x-.400.; y= cam#pos#get.y }
       else if (x<400. && not(free_cam)) then cam#pos#set Vector.{x= cam#pos#get.x; y=y-.300. }
       else cam#pos#set Vector.{x= x-.400.; y= y-.300. }
-      
     ) autre

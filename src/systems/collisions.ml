@@ -41,7 +41,6 @@ let update _dt (el : t Seq.t) =
         end;
         player#pos#set pos1;
         let n = Vector.normalize n in 
-        (*let e = 0. in (*elasticité ici !!!!!!!!!!!!*)*)
         let j = -1. *. Vector.dot v1 n in 
         let new_v1 = Vector.add v1 (Vector.mult j n) in 
         player#velocity#set new_v1
