@@ -3,7 +3,7 @@ type t = movable
 
 let init _ = () 
 let dt = 1000. /. 60.
-let free_cam = true
+let free_cam = false
 
 let update _dt el = 
   let autre = Seq.filter_map (fun (e:t) -> if e#layer#get != 0 then Some e else None) el in
